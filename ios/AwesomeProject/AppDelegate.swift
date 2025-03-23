@@ -1,30 +1,25 @@
+swift
 import UIKit
-import React
-import React_RCTAppDelegate
-import ReactAppDependencyProvider
 
-@main
-class AppDelegate: RCTAppDelegate {
-  override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    self.moduleName = "AwesomeProject"
-    self.dependencyProvider = RCTAppDependencyProvider()
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    // You can add your custom initial props in the dictionary below.
-    // They will be passed down to the ViewController used by React Native.
-    self.initialProps = [:]
+  var window: UIWindow?
 
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-  }
+  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    
+    let jsCodeLocation: URL
 
-  override func sourceURL(for bridge: RCTBridge) -> URL? {
-    self.bundleURL()
-  }
+    jsCodeLocation = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
 
-  override func bundleURL() -> URL? {
-#if DEBUG
-    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
-#else
-    Bundle.main.url(forResource: "main", withExtension: "jsbundle")
-#endif
+    let rootView = RCTRootView(bundleURL: jsCodeLocation, moduleName: "biz-flow", initialProperties: nil, launchOptions: launchOptions)
+    rootView.backgroundColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1)
+
+    self.window = UIWindow(frame: UIScreen.main.bounds)
+    let rootViewController = UIViewController()
+    rootViewController.view = rootView
+    self.window?.rootViewController = rootViewController
+    self.window?.makeKeyAndVisible()
+    return true
   }
 }
