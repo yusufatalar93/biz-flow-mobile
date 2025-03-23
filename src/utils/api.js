@@ -62,9 +62,9 @@ const api = {
         try {
             const authHeader = await getAuthHeader();
             const response = await fetch(`${BASE_URL}/authenticate`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
-                    ...authHeader,
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(loginRequest),
             });
