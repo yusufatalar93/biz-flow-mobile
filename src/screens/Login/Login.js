@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert } from 'react-native';
+import { View, Text, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import styles from './Login.styles';
 import api from '../../utils/api';
 import LoginRequest from '../../models/LoginRequest';
@@ -7,6 +8,7 @@ import LoginRequest from '../../models/LoginRequest';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
@@ -17,9 +19,12 @@ const Login = () => {
     try {
       const loginRequest = new LoginRequest(email, password);
       const response = await api.login(loginRequest);
-      console.log('Login successful:', response);
-      Alert.alert("Success", "Login successful");
+      await api.setTokens(response.access_token, response.refresh_token);
+      navigation.navigate('MainScreen');
+
     } catch (error) {
+      if(error.message)
+        Alert.alert('Error', error.message);
       console.error('Login failed:', error);
       Alert.alert('Error', JSON.stringify(error));
     } finally {
@@ -28,6 +33,7 @@ const Login = () => {
   };
 
   return (
+    
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
 
@@ -48,6 +54,17 @@ const Login = () => {
       />
 
       <Button title="Login" onPress={handleLogin} disabled={loading}/>
+      
+      {/* Register Sayfasına Geçiş Butonu */}
+      <Button
+        title="Register"
+        onPress={() => navigation.navigate('Register')}
+      />
+
+      {loading && (
+          <ActivityIndicator size="large" color="#0000ff" />
+        )}
+
     </View>
   );
 };

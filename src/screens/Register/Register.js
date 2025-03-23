@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, ScrollView, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import styles from './Register.styles';
 import api from '../../utils/api';
 import RegisterRequest from '../../models/RegisterRequest';
@@ -12,6 +13,7 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [companyName, setCompanyName] = useState('');
+  const navigation = useNavigation();
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -37,9 +39,11 @@ const Register = () => {
         address
       );
       const response = await api.register(registerRequest);
-      console.log('Register successful:', response);
-      Alert.alert("Success", "Register successful");
+      await api.setTokens(response);
+      navigation.navigate('MainScreen');
     } catch (error) {
+        if(error.message){
+          Alert.alert("Error", error.message);
       console.error('Register failed:', error);
       Alert.alert('Error', JSON.stringify(error));
     } finally {
@@ -112,6 +116,10 @@ const Register = () => {
       />
 
       <Button title="Register" onPress={handleRegister} disabled={loading}/>
+      <Button
+          title="Login"
+          onPress={() => navigation.navigate('Login')}
+        />
     </ScrollView>
   );
 };
